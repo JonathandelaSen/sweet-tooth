@@ -3,7 +3,7 @@ import express, { Router } from 'express';
 import helmet from 'helmet';
 import * as http from 'http';
 import { register as usersRegisterRoutes } from '../users/infrastructure/controllers/routes';
-import { register as sessionRegisterRoutes } from '../session/infrastructure/controllers/routes';
+import { register as sessionRegisterRoutes } from '../auth/infrastructure/controllers/routes';
 import container from '../shared/dependency-injector';
 
 
@@ -45,24 +45,24 @@ export class Server {
     async stop(): Promise<void> {
         return new Promise((resolve, reject) => {
             if (this.httpServer) {
-              this.httpServer.close(error => {
-                if (error) {
-                  return reject(error);
-                }
-                return resolve();
-              });
+                this.httpServer.close(error => {
+                    if (error) {
+                        return reject(error);
+                    }
+                    return resolve();
+                });
             }
             return resolve();
         });
     }
 
-     private setPublicRouter(): void  {
+    private setPublicRouter(): void {
         const router = Router();
         this.express.use(router);
         sessionRegisterRoutes(router)
     }
 
-     private setPriveRouter(): void  {
+    private setPriveRouter(): void {
         const router = Router();
         this.express.use("/api", router);
         usersRegisterRoutes(router)
